@@ -1,8 +1,5 @@
 # my_website
 
-Hello World, how are you this great morning?
+My first attempt to learn R and GitHub.
 
-
-
-
-Test Line
+Hello world, this is a great day!
