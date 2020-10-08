@@ -93,7 +93,7 @@ disqusShortname = ""
     
     [[params.tiles.showcase]]
       title = "About Me"
-        subtitle = "perosnal Headline"
+        subtitle = "Personal Headline"
       image = "pic01.jpg"
       url = "About Me"
 
@@ -181,7 +181,7 @@ disqusShortname = ""
     [[params.contact.address]]
     title = "Address"
     street = "Regent's Park"
-    city = "lONDON, NW1 4SA"
+    city = "London, NW1 4SA"
     country = "United Kingdom"
 
   # Footer section
