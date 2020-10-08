@@ -81,8 +81,8 @@ disqusShortname = ""
   [params.banner]
     # To change the background image on the homepage banner, replace 'banner.jpg' in
     # the 'static/img' folder.
-    title = "Hi, my name is Nauman Khan"
-    subtitle = "A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP\nAND RELEASED UNDER THE CREATIVE COMMONS."
+    title = "Hi, My Name is Nauman Khan"
+    subtitle = "currently Pursuing my Masters in Financial Analysis at London Busienss School."
     buttonText = "Get Started"
 
 
@@ -92,38 +92,38 @@ disqusShortname = ""
     # Display your showcases here.
     
     [[params.tiles.showcase]]
-      title = "Aliquam"
-      subtitle = "Ipsum Dolor Sit Amet"
+      title = "About Me"
+        subtitle = "perosnal Headline"
       image = "pic01.jpg"
-      url = "blogs/aliquam"
+      url = "About Me"
 
     [[params.tiles.showcase]]
-      title = "Tempus"
-      subtitle = "Feugiat Amet Tempus"
+      title = "Blog 1"
+      subtitle = "Blog Headline"
       image = "pic02.jpg"
       url = "blogs/tempus"
 
     [[params.tiles.showcase]]
-      title = "Magna"
+      title = "Blog 2"
       subtitle = "Lorem Etiam Nullam"
       image = "pic03.jpg"
       url = "blogs/magna"
 
     [[params.tiles.showcase]]
-      title = "Ipsum"
-      subtitle = "Nisl Sed Aliquam"
+      title = "Blog 3"
+      subtitle = "Blog Headline"
       image = "pic04.jpg"
       url = "blogs/ipsum"
 
     [[params.tiles.showcase]]
-      title = "Consequat"
-      subtitle = "Ipsum Dolor Sit Amet"
+      title = "Blog 3"
+      subtitle = "Blog Headline"
       image = "pic05.jpg"
       url = "blogs/ipsum"
 
     [[params.tiles.showcase]]
-      title = "Etiam"
-      subtitle = "Feugiat Amet Tempus"
+      title = "Blog 4"
+      subtitle = "Blog Headline"
       image = "pic06.jpg"
       url = "blogs/ipsum"
     # You can make more showcases by copy and pasting the code above
@@ -172,50 +172,50 @@ disqusShortname = ""
     # by copying the corresponding map with frontmatter code.
     [[params.contact.email]]
     title = "Email"
-    email = "example@domain.com"
+    email = "nkhan.mfa2021@london.edu"
 
-    [[params.contact.phone]]
-    title = "Phone"
-    phone = "(000) 000-0000 x1234"
+   # [[params.contact.phone]]
+   # title = "Phone"
+   # phone = "(000) 000-0000 x1234"
 
     [[params.contact.address]]
     title = "Address"
-    street = "Street"
-    city = "City, ST 00000"
-    country = "Country"
+    street = "Regent's Park"
+    city = "lONDON, NW1 4SA"
+    country = "United Kingdom"
 
   # Footer section
   [params.footer]
     enable = true
-    copyright = "Company Name"
+    copyright = "Nauman Khan"
 
     # Uses font awesome icons
     [[params.footer.social]]
       icon = "fa-twitter"
-      url= "https://www.twitter.com"
+      url= "https://twitter.com/NaumanAlam"
       label = "Twitter"
 
-    [[params.footer.social]]
-      icon = "fa-facebook"
-      url= "https://www.facebook.com"
-      label = "Facebook"
+  #  [[params.footer.social]]
+    #  icon = "fa-facebook"
+    #  url= "https://www.facebook.com"
+    #  label = "Facebook"
 
-    [[params.footer.social]]
-      icon = "fa-instagram"
-      url= "https://www.instagram.com"
-      label = "Instagram"
+   # [[params.footer.social]]
+    #  icon = "fa-instagram"
+  #    url= "https://www.instagram.com"
+   #   label = "Instagram"
     
     [[params.footer.social]]
       icon = "fa-github"
-      url= "https://www.github.com"
+      url= "https://github.com/NaumanKhanMFA"
       label = "GitHub"
 
     [[params.footer.social]]
       icon = "fa-linkedin"
-      url= "https://www.linkedin.com"
+      url= "https://www.linkedin.com/in/muhammad-nauman-alam-khan/"
       label = "LinkedIn"
 
-    [[params.footer.quicklinks]]
-      text = "Design: "
-      url= "https://www.html5up.net"
-      alt = "HTML5 UP"
+  #  [[params.footer.quicklinks]]
+   #   text = "Design: "
+   #   url= "https://www.html5up.net"
+   #   alt = "HTML5 UP"
