@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Portfolio Website for Nauman</title>
+    <link>/projects/</link>
+    <description>Recent content in Projects on Portfolio Website for Nauman</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 31 Oct 2017 21:28:43 -0500</lastBuildDate><atom:link href="/projects/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About Me</title>
+      <link>/projects/about-me/muhammad_nauman_alam_khan/</link>
+      <pubDate>Tue, 31 Oct 2017 21:28:43 -0500</pubDate>
+      
+      <guid>/projects/about-me/muhammad_nauman_alam_khan/</guid>
+      <description>Nauman Khan BiographyNauman Khan
+IntroductionMy name is Muhammad Nauman Alam Khan and I was born and brought up in Paksitan, where I spent the first 16 years of my life. It was during my formative years that I was initially introduced to field hockey, a sport that I would go on to dedicate most of the next decade of my life to.
+HockeyI first played the sport casually at school before trying out for the school team, of which I became the captain of in my second year on the team.</description>
+    </item>
+    
+  </channel>
+</rss>

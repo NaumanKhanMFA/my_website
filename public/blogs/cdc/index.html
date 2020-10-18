@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="Hi! I am Nauman and I am currently pursuing my Masters in Financial Analysis at London Busienss School. Born and raised in Pakistan I have lived in 4 countires across my academic and professional life.">
+	<meta name="author" content="Muhammad Nauman Alam Khan">
+	<meta name="generator" content="Hugo 0.76.3" />
+	<title>CDC COVID-19 Public Use Data &middot; Portfolio Website for Nauman</title>
+	<!-- Stylesheets -->
+	
+	<link rel="stylesheet" href="/css/main.css"/>
+	
+	
+
+	
+
+	<!-- Custom Fonts -->
+	<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="js/ie/html5shiv.js"></script>
+	<script src="js/ie/html5shiv.jsrespond.min.js"></script>
+	<![endif]-->
+</head>
+
+    <body>
+
+    <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Header -->
+    <header id="header" class="alt">
+        <a href="/" class="logo"><strong>Portfolio Website for Nauman Khan</strong> <span></span></a>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+<!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            
+                <li><a href="/">Home</a></li>
+            
+                <li><a href="/About%20Me">About Me</a></li>
+            
+                <li><a href="/Projects">Projects</a></li>
+            
+
+        </ul>
+        <ul class="actions vertical">
+            
+                <li><a href="/blogs/Muhammad_Nauman_Alam_Khan" class="button special fit">About Me</a></li>
+            
+            
+                <li><a href="/blogs" class="button fit">Projects</a></li>
+            
+        </ul>
+    </nav>
+
+        <!-- Main -->
+            <div id="main" class="alt">
+
+                
+                    <section id="one">
+                        <div class="inner">
+                            <header class="major">
+                                <h1>CDC COVID-19 Public Use Data</h1>
+                            </header>
+                            
+                                <span class="image main"><img src="/img/blogs/pic06.jpg" alt="" /></span>
+                            
+                            
+
+
+<p>Let us revisit the <a href="https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data/vbim-akqf">CDC Covid-19 Case Surveillance Data</a>. There are well over 3 million entries of individual, de-identified patient data. Since this is a large file, I suggest you use <code>vroom</code> to load it and you keep <code>cache=TRUE</code> in the chunk options.</p>
+<p><img src="C:/Users/Muhammad%20Nauman%20Khan/Desktop/LBS/Term%201/Data%20Analytics/my_website/images/covid_death_rate_comorbidities.png" width="100%" style="display: block; margin: auto;" /><img src="C:/Users/Muhammad%20Nauman%20Khan/Desktop/LBS/Term%201/Data%20Analytics/my_website/images/covid_death_rate_icu.png" width="100%" style="display: block; margin: auto;" />
+Given the data we have, I would like you to produce two graphs that show death % rate:</p>
+<ol style="list-style-type: decimal">
+<li>by age group, sex, and whether the patient had co-morbidities or not</li>
+</ol>
+<pre class="r"><code># Clean Covid data
+cleaned_covid_data &lt;- covid_data %&gt;% 
+  filter(age_group != &quot;Unknown&quot;) %&gt;% 
+  filter(sex != &quot;Missing&quot;) %&gt;% 
+  filter(sex != &quot;Unknown&quot;) %&gt;% 
+  filter(sex != &quot;Other&quot;) %&gt;% 
+  filter(medcond_yn != &quot;Missing&quot;) %&gt;% 
+  filter(medcond_yn != &quot;Unknown&quot;) %&gt;% 
+  filter(death_yn != &quot;Unknown&quot;) %&gt;% 
+  filter(death_yn != &quot;Missing&quot;) 
+  # %&gt;% filter(current_status != &quot;Probable Case&quot;)
+
+
+# Calculation Covid_comorbidities
+covid_comorbidities &lt;- cleaned_covid_data %&gt;% 
+  dplyr::count(age_group,sex,medcond_yn,death_yn) %&gt;% 
+  spread(key = death_yn, value = n) %&gt;% 
+ mutate(death_percentage = Yes/(Yes+No)) </code></pre>
+<pre class="r"><code># Change the order and the label name
+covid_comorbidities$medcond_yn_f = factor(covid_comorbidities$medcond_yn, levels=c(&#39;Yes&#39;,&#39;No&#39;))
+covid_comorbidities$medcond_yn_f &lt;- factor(covid_comorbidities$medcond_yn_f, labels = c(&quot;With Comorbidities&quot;, &quot;Without Comorbidities&quot;))
+
+# ggplot
+ggplot(covid_comorbidities,aes(x = age_group, y =death_percentage))+
+      geom_col(fill = &quot;#6b7ca4&quot;, show.legend = FALSE, alpha = 1)+
+      theme_bw()+
+      facet_grid(medcond_yn_f ~ sex)+
+      coord_flip()+
+      geom_text(aes(label = round(death_percentage*100, 1), hjust = -0.2))+
+      labs(title = &quot;Covid death percentage by sex, age group and presence of co-morbidities&quot;)+
+      theme_classic()+
+      theme(axis.title.x = element_blank(),
+            axis.title.y = element_blank())+
+      scale_y_continuous(labels = scales::percent)</code></pre>
+<p><img src="/blogs/CDC_files/figure-html/plot_comorbidities-1.png" width="1440" style="display: block; margin: auto;" /></p>
+<ol style="list-style-type: decimal">
+<li>by age group, sex, and whether the patient was admited to Intensive Care Unit (ICU) or not.</li>
+</ol>
+<pre class="r"><code># Clean Covid data
+covid_data_cleaned_icu &lt;- covid_data %&gt;% 
+  filter(age_group != &quot;Unknown&quot;) %&gt;% 
+  filter(sex != &quot;Missing&quot;) %&gt;% 
+  filter(sex != &quot;Unknown&quot;) %&gt;% 
+  filter(sex != &quot;Other&quot;) %&gt;% 
+  filter(icu_yn != &quot;Missing&quot;) %&gt;% 
+  filter(icu_yn != &quot;Unknown&quot;) %&gt;% 
+  filter(death_yn != &quot;Unknown&quot;) %&gt;% 
+  filter(death_yn != &quot;Missing&quot;)
+
+# Calculation death_percentage
+covid_icu &lt;- covid_data_cleaned_icu %&gt;% 
+  dplyr::count(age_group,sex,icu_yn,death_yn) %&gt;% 
+  spread(key = death_yn, value = n) %&gt;% 
+ mutate(death_percentage = Yes/(Yes+No)) </code></pre>
+<pre class="r"><code># Change order and label name
+covid_icu$icu_yn = factor(covid_icu$icu_yn, levels=c(&#39;Yes&#39;,&#39;No&#39;))
+icu_name &lt;- list(&quot;Yes&quot; = &quot;ICU Admitted &quot;,
+                 &quot;No&quot; = &quot;No ICU&quot;)
+icu_labeller &lt;- function(variable, value){
+  return(icu_name[value])
+}
+
+
+# Visualization
+ggplot(covid_icu,aes(x = age_group, y =death_percentage))+
+      geom_col(fill = &quot;#fe9481&quot;, show.legend = FALSE, alpha = 0.85)+
+      theme_bw()+
+      facet_grid(icu_yn ~ sex, labeller = icu_labeller)+
+      coord_flip()+
+      geom_text(aes(label = round(death_percentage*100, 1), hjust = -0.1))+
+      labs(title = &quot;Covid death percentage by sex, age group and whether patient was ICU Admitted&quot;)+
+      theme_classic()+
+      theme(axis.title.x = element_blank(),
+            axis.title.y = element_blank())+
+      scale_y_continuous(labels = scales::percent)</code></pre>
+<p><img src="/blogs/CDC_files/figure-html/plot_icu-1.png" width="1440" style="display: block; margin: auto;" /></p>
+
+                        </div>
+                    </section>
+            <!-- Disqus Inject -->
+                
+            </div>
+            
+        <!-- Footer -->
+            
+                <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                
+                    <li><a href="https://twitter.com/NaumanAlam" class="icon alt fa-twitter" target="_blank"><span class="label">Twitter</span></a></li>
+                
+                    <li><a href="https://github.com/NaumanKhanMFA" class="icon alt fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                
+                    <li><a href="https://www.linkedin.com/in/muhammad-nauman-alam-khan/" class="icon alt fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                
+            </ul>
+            <ul class="copyright">
+                <li>&copy; Nauman Khan</li>
+                
+            </ul>
+        </div>
+    </footer>
+
+            
+        </div>
+
+    <!-- Scripts -->
+        <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.scrolly.min.js"></script>
+    <script src="/js/jquery.scrollex.min.js"></script>
+    <script src="/js/skel.min.js"></script>
+    <script src="/js/util.js"></script>
+
+    
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+
+    
+
+    
+
+    </body>
+</html>

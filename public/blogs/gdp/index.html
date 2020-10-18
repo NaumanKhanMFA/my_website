@@ -1,0 +1,1938 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="Hi! I am Nauman and I am currently pursuing my Masters in Financial Analysis at London Busienss School. Born and raised in Pakistan I have lived in 4 countires across my academic and professional life.">
+	<meta name="author" content="Muhammad Nauman Alam Khan">
+	<meta name="generator" content="Hugo 0.76.3" />
+	<title>GDP Components Over Time and Among Countries &middot; Portfolio Website for Nauman</title>
+	<!-- Stylesheets -->
+	
+	<link rel="stylesheet" href="/css/main.css"/>
+	
+	
+
+	
+
+	<!-- Custom Fonts -->
+	<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="js/ie/html5shiv.js"></script>
+	<script src="js/ie/html5shiv.jsrespond.min.js"></script>
+	<![endif]-->
+</head>
+
+    <body>
+
+    <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Header -->
+    <header id="header" class="alt">
+        <a href="/" class="logo"><strong>Portfolio Website for Nauman Khan</strong> <span></span></a>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+<!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            
+                <li><a href="/">Home</a></li>
+            
+                <li><a href="/About%20Me">About Me</a></li>
+            
+                <li><a href="/Projects">Projects</a></li>
+            
+
+        </ul>
+        <ul class="actions vertical">
+            
+                <li><a href="/blogs/Muhammad_Nauman_Alam_Khan" class="button special fit">About Me</a></li>
+            
+            
+                <li><a href="/blogs" class="button fit">Projects</a></li>
+            
+        </ul>
+    </nav>
+
+        <!-- Main -->
+            <div id="main" class="alt">
+
+                
+                    <section id="one">
+                        <div class="inner">
+                            <header class="major">
+                                <h1>GDP Components Over Time and Among Countries</h1>
+                            </header>
+                            
+                                <span class="image main"><img src="/img/blogs/pic03.jpg" alt="" /></span>
+                            
+                            
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+<link href="/rmarkdown-libs/lightable/lightable.css" rel="stylesheet" />
+
+
+<p>At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). You can read more about GDP and the different approaches in calculating at the <a href="https://en.wikipedia.org/wiki/Gross_domestic_product">Wikipedia GDP page</a>.</p>
+<p>The GDP data we will look at is from the <a href="https://unstats.un.org/unsd/snaama/Downloads">United Nations’ National Accounts Main Aggregates Database</a>, which contains estimates of total GDP and its components for all countries from 1970 to today. We will look at how GDP and its components have changed over time, and compare different countries and how much each component contributes to that country’s GDP. The file we will work with is <a href="http://unstats.un.org/unsd/amaapi/api/file/6">GDP and its breakdown at constant 2010 prices in US Dollars</a> and it has already been saved in the Data directory. Have a look at the Excel file to see how it is structured and organised</p>
+<div id="tidy-up-the-data" class="section level2">
+<h2>Tidy up the data</h2>
+<pre class="r"><code># download the data
+UN_GDP_data  &lt;-  readxl::read_excel(path=&quot;data/Download-GDPconstant-USD-countries.xls&quot;, sheet =&quot;Download-GDPconstant-USD-countr&quot;, # Excel filename
+                skip=2) # Number of rows to skip</code></pre>
+<pre class="r"><code># unique variables
+unique(UN_GDP_data$IndicatorName)</code></pre>
+<pre><code>##  [1] &quot;Final consumption expenditure&quot;                                                           
+##  [2] &quot;Household consumption expenditure (including Non-profit institutions serving households)&quot;
+##  [3] &quot;General government final consumption expenditure&quot;                                        
+##  [4] &quot;Gross capital formation&quot;                                                                 
+##  [5] &quot;Gross fixed capital formation (including Acquisitions less disposals of valuables)&quot;      
+##  [6] &quot;Exports of goods and services&quot;                                                           
+##  [7] &quot;Imports of goods and services&quot;                                                           
+##  [8] &quot;Gross Domestic Product (GDP)&quot;                                                            
+##  [9] &quot;Agriculture, hunting, forestry, fishing (ISIC A-B)&quot;                                      
+## [10] &quot;Mining, Manufacturing, Utilities (ISIC C-E)&quot;                                             
+## [11] &quot;Manufacturing (ISIC D)&quot;                                                                  
+## [12] &quot;Construction (ISIC F)&quot;                                                                   
+## [13] &quot;Wholesale, retail trade, restaurants and hotels (ISIC G-H)&quot;                              
+## [14] &quot;Transport, storage and communication (ISIC I)&quot;                                           
+## [15] &quot;Other Activities (ISIC J-P)&quot;                                                             
+## [16] &quot;Total Value Added&quot;                                                                       
+## [17] &quot;Changes in inventories&quot;</code></pre>
+<pre class="r"><code># turning indicator variables to categories
+UN_GDP_data$IndicatorName = factor(UN_GDP_data$IndicatorName)
+
+# rename categories  
+UN_GDP_data$IndicatorName &lt;- fct_recode(UN_GDP_data$IndicatorName, 
+           Final_consumption = &quot;Final consumption expenditure&quot;,
+           Household_consumption = &quot;Household consumption expenditure (including Non-profit institutions serving households)&quot;,
+           Government_consumption = &quot;General government final consumption expenditure&quot;,
+           Gross_capital_formation = &quot;Gross capital formation&quot;,           
+           Gross_fixed_capital_formation = &quot;Gross fixed capital formation (including Acquisitions less disposals of valuables)&quot;,
+           Exports = &quot;Exports of goods and services&quot;,
+           Imports = &quot;Imports of goods and services&quot;,
+           GDP_given = &quot;Gross Domestic Product (GDP)&quot;,
+           AAHFF = &quot;Agriculture, hunting, forestry, fishing (ISIC A-B)&quot;,
+           MMU = &quot;Mining, Manufacturing, Utilities (ISIC C-E)&quot;,
+           Manufacturing = &quot;Manufacturing (ISIC D)&quot;,
+           Construction = &quot;Construction (ISIC F)&quot;,
+           WRRH = &quot;Wholesale, retail trade, restaurants and hotels (ISIC G-H)&quot;,
+           TSC = &quot;Transport, storage and communication (ISIC I)&quot;,                        
+           Others = &quot;Other Activities (ISIC J-P)&quot;
+           )
+
+# create tidied data frame
+tidy_GDP_data  &lt;- UN_GDP_data %&gt;% 
+  pivot_longer(cols=4:51, names_to=&quot;Year&quot;, values_to=&quot;GDP&quot;) %&gt;%  # bring year variable in long format#
+  mutate(GDP = GDP/10^9)
+
+# have a look at tidied data
+glimpse(tidy_GDP_data)</code></pre>
+<pre><code>## Rows: 176,880
+## Columns: 5
+## $ CountryID     &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,...
+## $ Country       &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghani...
+## $ IndicatorName &lt;fct&gt; Final_consumption, Final_consumption, Final_consumpti...
+## $ Year          &lt;chr&gt; &quot;1970&quot;, &quot;1971&quot;, &quot;1972&quot;, &quot;1973&quot;, &quot;1974&quot;, &quot;1975&quot;, &quot;1976...
+## $ GDP           &lt;dbl&gt; 5.56, 5.33, 5.20, 5.75, 6.15, 6.32, 6.37, 6.90, 7.09,...</code></pre>
+</div>
+<div id="reproduction-chart-1" class="section level2">
+<h2>Reproduction: Chart 1</h2>
+<pre class="r"><code># Let us compare GDP components for these 3 countries
+country_list &lt;- c(&quot;Germany&quot;, &quot;India&quot;, &quot;United States&quot;)
+
+# select only the required components of GDP
+indicator_list &lt;- c(&quot;Gross_capital_formation&quot;, &quot;Exports&quot;, &quot;Government_consumption&quot;, &quot;Household_consumption&quot;, &quot;Imports&quot;)
+
+# turn GDP into numeric data
+tidy_GDP_data$GDP &lt;- as.numeric(as.character(tidy_GDP_data$GDP))
+tidy_GDP_data$Year &lt;- as.numeric(as.character(tidy_GDP_data$Year))
+
+# select data only for selected countries &amp; indicators
+graph1_data &lt;- tidy_GDP_data %&gt;% 
+  filter(Country %in% country_list) %&gt;% 
+  filter(IndicatorName  %in% indicator_list)
+
+# create ggplot
+ggplot(graph1_data, aes(x=Year, y=GDP, color=IndicatorName)) + 
+  
+  # set line and facets
+  geom_line(aes(group=IndicatorName)) +
+  facet_wrap(~Country) +
+  
+  # labeling
+  labs(
+    title = &quot;GDP components over time&quot;,
+    subtitle = &quot;In constant 2010 USD&quot;,
+    y = &quot;Billion US$&quot;,
+    x = &quot;&quot;,
+    color = &quot;Components of GDP&quot;
+    ) +
+  
+  # visual theme
+  theme(
+              strip.background = element_rect(fill=&quot;grey&quot;, size = 0.5, color = &quot;black&quot;),
+              strip.text = element_text(size=10),
+              panel.background = element_rect(colour = &quot;black&quot;, size=0.5, fill = NA),
+              panel.grid = element_line(colour = &quot;#f1f1f1&quot;),
+              legend.key = element_rect(colour = &quot;transparent&quot;, fill = &quot;transparent&quot;),
+              plot.title = element_text(size = 12)) +
+  
+  # axis and legend
+  scale_x_continuous(breaks = seq(1970, 2010, by = 10)) +
+  scale_color_discrete(labels = c(&quot;Exports&quot;, 
+                                 &quot;Government expenditure&quot;, 
+                                 &quot;Gross Capital Expenditure&quot;,
+                                 &quot;Household expenditure&quot;,
+                                 &quot;Imports&quot;))</code></pre>
+<p><img src="/blogs/GDP_files/figure-html/unnamed-chunk-2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="manual-calculation-of-gdp" class="section level2">
+<h2>Manual calculation of GDP</h2>
+<p>Secondly, recall that GDP is the sum of Household Expenditure (Consumption <em>C</em>), Gross Capital Formation (business investment <em>I</em>), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator <code>Gross Domestic Product (GDP)</code> in your dataframe, I would like you to calculate it given its components discussed above.</p>
+<blockquote>
+<p>What is the % difference between what you calculated as GDP and the GDP figure included in the dataframe?</p>
+</blockquote>
+<pre class="r"><code># select only the required components of GDP
+indicator_list2 &lt;- c(&quot;Gross_capital_formation&quot;, &quot;Exports&quot;, &quot;Government_consumption&quot;, &quot;Household_consumption&quot;, &quot;Imports&quot;, &quot;GDP_given&quot;)
+
+# calculate overall GDP
+calculated_GDP &lt;- graph1_data %&gt;%
+  mutate(GDP = case_when(IndicatorName == &quot;Imports&quot; ~ -GDP, TRUE ~ GDP)) %&gt;% 
+  group_by(Country, Year) %&gt;% 
+  summarise(Yearly_GDP = sum(GDP))
+
+# create wide format table and join calculated GDP
+graph2_data &lt;- tidy_GDP_data %&gt;% 
+  filter(Country %in% country_list) %&gt;% 
+  filter(IndicatorName  %in% c(indicator_list2)) %&gt;% 
+  
+  # switch to wide format to do calculations
+  pivot_wider(names_from = IndicatorName, values_from = GDP) %&gt;%
+  mutate(Net_Exports = Exports - Imports) %&gt;% 
+  inner_join(calculated_GDP, by = c(&quot;Country&quot;, &quot;Year&quot;)) %&gt;% 
+  mutate(abs_difference = Yearly_GDP - GDP_given) %&gt;% 
+  mutate(per_difference = (abs_difference/ GDP_given)*100)
+
+# print difference between given GDP and calculated GDP
+graph2_data %&gt;% 
+  select(c(Country, Year, per_difference)) %&gt;% 
+  kbl(col.names = c(&quot;Country&quot;, &quot;Year&quot;, &quot;% difference in GDP&quot;)) %&gt;%
+  kable_classic(&quot;striped&quot;) %&gt;%
+  kable_styling(fixed_thead = T)</code></pre>
+<table class=" lightable-classic lightable-striped table" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto; margin-left: auto; margin-right: auto;'>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Country
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Year
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+% difference in GDP
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1970
+</td>
+<td style="text-align:right;">
+3.030
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1971
+</td>
+<td style="text-align:right;">
+3.540
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1972
+</td>
+<td style="text-align:right;">
+3.557
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1973
+</td>
+<td style="text-align:right;">
+2.921
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1974
+</td>
+<td style="text-align:right;">
+1.781
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1975
+</td>
+<td style="text-align:right;">
+2.927
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1976
+</td>
+<td style="text-align:right;">
+2.833
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1977
+</td>
+<td style="text-align:right;">
+2.765
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1978
+</td>
+<td style="text-align:right;">
+3.049
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1979
+</td>
+<td style="text-align:right;">
+3.442
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1980
+</td>
+<td style="text-align:right;">
+3.122
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1981
+</td>
+<td style="text-align:right;">
+1.919
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1982
+</td>
+<td style="text-align:right;">
+1.306
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1983
+</td>
+<td style="text-align:right;">
+1.674
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1984
+</td>
+<td style="text-align:right;">
+1.136
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1985
+</td>
+<td style="text-align:right;">
+0.583
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1986
+</td>
+<td style="text-align:right;">
+1.248
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1987
+</td>
+<td style="text-align:right;">
+1.681
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1988
+</td>
+<td style="text-align:right;">
+1.583
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1989
+</td>
+<td style="text-align:right;">
+1.169
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1990
+</td>
+<td style="text-align:right;">
+0.877
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1991
+</td>
+<td style="text-align:right;">
+0.608
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1992
+</td>
+<td style="text-align:right;">
+0.765
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1993
+</td>
+<td style="text-align:right;">
+0.811
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+0.792
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1995
+</td>
+<td style="text-align:right;">
+0.788
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1996
+</td>
+<td style="text-align:right;">
+0.787
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1997
+</td>
+<td style="text-align:right;">
+0.660
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:right;">
+0.618
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:right;">
+0.613
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2000
+</td>
+<td style="text-align:right;">
+0.473
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2001
+</td>
+<td style="text-align:right;">
+0.407
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2002
+</td>
+<td style="text-align:right;">
+0.258
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2003
+</td>
+<td style="text-align:right;">
+0.292
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+0.176
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2005
+</td>
+<td style="text-align:right;">
+0.109
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2006
+</td>
+<td style="text-align:right;">
+0.060
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2007
+</td>
+<td style="text-align:right;">
+0.035
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2008
+</td>
+<td style="text-align:right;">
+0.039
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2009
+</td>
+<td style="text-align:right;">
+0.073
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2010
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2011
+</td>
+<td style="text-align:right;">
+-0.003
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2012
+</td>
+<td style="text-align:right;">
+0.002
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2013
+</td>
+<td style="text-align:right;">
+0.029
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+0.042
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2015
+</td>
+<td style="text-align:right;">
+0.054
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2016
+</td>
+<td style="text-align:right;">
+0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+2017
+</td>
+<td style="text-align:right;">
+-0.041
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1970
+</td>
+<td style="text-align:right;">
+0.068
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1971
+</td>
+<td style="text-align:right;">
+1.916
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1972
+</td>
+<td style="text-align:right;">
+2.143
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1973
+</td>
+<td style="text-align:right;">
+3.499
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1974
+</td>
+<td style="text-align:right;">
+3.396
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1975
+</td>
+<td style="text-align:right;">
+1.131
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1976
+</td>
+<td style="text-align:right;">
+3.947
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1977
+</td>
+<td style="text-align:right;">
+1.933
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1978
+</td>
+<td style="text-align:right;">
+4.531
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1979
+</td>
+<td style="text-align:right;">
+7.408
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1980
+</td>
+<td style="text-align:right;">
+5.977
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1981
+</td>
+<td style="text-align:right;">
+6.452
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1982
+</td>
+<td style="text-align:right;">
+5.235
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1983
+</td>
+<td style="text-align:right;">
+1.777
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1984
+</td>
+<td style="text-align:right;">
+3.425
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1985
+</td>
+<td style="text-align:right;">
+4.421
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1986
+</td>
+<td style="text-align:right;">
+3.414
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1987
+</td>
+<td style="text-align:right;">
+3.865
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1988
+</td>
+<td style="text-align:right;">
+2.619
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1989
+</td>
+<td style="text-align:right;">
+0.714
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1990
+</td>
+<td style="text-align:right;">
+1.177
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1991
+</td>
+<td style="text-align:right;">
+-0.237
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1992
+</td>
+<td style="text-align:right;">
+-0.918
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1993
+</td>
+<td style="text-align:right;">
+-3.461
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+-4.079
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1995
+</td>
+<td style="text-align:right;">
+-2.008
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1996
+</td>
+<td style="text-align:right;">
+-5.571
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1997
+</td>
+<td style="text-align:right;">
+-5.921
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:right;">
+-6.345
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:right;">
+-2.746
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2000
+</td>
+<td style="text-align:right;">
+-4.295
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2001
+</td>
+<td style="text-align:right;">
+-4.371
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2002
+</td>
+<td style="text-align:right;">
+-2.987
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2003
+</td>
+<td style="text-align:right;">
+-4.220
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+-2.279
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2005
+</td>
+<td style="text-align:right;">
+-0.358
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2006
+</td>
+<td style="text-align:right;">
+-2.161
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2007
+</td>
+<td style="text-align:right;">
+2.131
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2008
+</td>
+<td style="text-align:right;">
+-2.389
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2009
+</td>
+<td style="text-align:right;">
+-1.893
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2010
+</td>
+<td style="text-align:right;">
+1.066
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2011
+</td>
+<td style="text-align:right;">
+-0.512
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2012
+</td>
+<td style="text-align:right;">
+-0.322
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2013
+</td>
+<td style="text-align:right;">
+-0.158
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+-0.788
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2015
+</td>
+<td style="text-align:right;">
+-1.382
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2016
+</td>
+<td style="text-align:right;">
+-1.594
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2017
+</td>
+<td style="text-align:right;">
+-1.995
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1970
+</td>
+<td style="text-align:right;">
+4.554
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1971
+</td>
+<td style="text-align:right;">
+4.223
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1972
+</td>
+<td style="text-align:right;">
+3.753
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1973
+</td>
+<td style="text-align:right;">
+2.968
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1974
+</td>
+<td style="text-align:right;">
+3.109
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1975
+</td>
+<td style="text-align:right;">
+3.797
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1976
+</td>
+<td style="text-align:right;">
+3.324
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1977
+</td>
+<td style="text-align:right;">
+3.034
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1978
+</td>
+<td style="text-align:right;">
+2.428
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1979
+</td>
+<td style="text-align:right;">
+1.967
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1980
+</td>
+<td style="text-align:right;">
+1.850
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1981
+</td>
+<td style="text-align:right;">
+1.522
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1982
+</td>
+<td style="text-align:right;">
+2.479
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1983
+</td>
+<td style="text-align:right;">
+2.563
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1984
+</td>
+<td style="text-align:right;">
+1.784
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1985
+</td>
+<td style="text-align:right;">
+1.975
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1986
+</td>
+<td style="text-align:right;">
+2.088
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1987
+</td>
+<td style="text-align:right;">
+1.913
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1988
+</td>
+<td style="text-align:right;">
+1.631
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1989
+</td>
+<td style="text-align:right;">
+1.390
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1990
+</td>
+<td style="text-align:right;">
+1.345
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1991
+</td>
+<td style="text-align:right;">
+1.410
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1992
+</td>
+<td style="text-align:right;">
+1.191
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1993
+</td>
+<td style="text-align:right;">
+1.092
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+0.877
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1995
+</td>
+<td style="text-align:right;">
+0.750
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1996
+</td>
+<td style="text-align:right;">
+0.559
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1997
+</td>
+<td style="text-align:right;">
+0.393
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1998
+</td>
+<td style="text-align:right;">
+0.277
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+1999
+</td>
+<td style="text-align:right;">
+0.161
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2000
+</td>
+<td style="text-align:right;">
+0.045
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2001
+</td>
+<td style="text-align:right;">
+0.166
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2002
+</td>
+<td style="text-align:right;">
+0.178
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2003
+</td>
+<td style="text-align:right;">
+0.122
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+0.030
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2005
+</td>
+<td style="text-align:right;">
+-0.016
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2006
+</td>
+<td style="text-align:right;">
+-0.052
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2007
+</td>
+<td style="text-align:right;">
+-0.024
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2008
+</td>
+<td style="text-align:right;">
+-0.025
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2009
+</td>
+<td style="text-align:right;">
+0.034
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2010
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2011
+</td>
+<td style="text-align:right;">
+0.007
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2012
+</td>
+<td style="text-align:right;">
+0.021
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2013
+</td>
+<td style="text-align:right;">
+0.031
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+0.042
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2015
+</td>
+<td style="text-align:right;">
+0.021
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2016
+</td>
+<td style="text-align:right;">
+-0.010
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United States
+</td>
+<td style="text-align:right;">
+2017
+</td>
+<td style="text-align:right;">
+-0.038
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="reproduction-chart-2" class="section level1">
+<h1>Reproduction: Chart 2</h1>
+<pre class="r"><code># modify data to have all required input for plot
+graph3_data &lt;- graph2_data %&gt;%
+  select(c(Country, Year, Household_consumption, Government_consumption, Gross_capital_formation, Net_Exports, Yearly_GDP)) %&gt;% 
+  pivot_longer(cols=3:6, names_to=&quot;IndicatorName&quot;, values_to=&quot;GDP&quot;) %&gt;% 
+  mutate(GDP_percent = (GDP/Yearly_GDP))
+
+# create ggplot
+ggplot(graph3_data, aes(x=Year, y=GDP_percent, color=IndicatorName)) + 
+  
+  # set line and facets
+  geom_line(aes(group=IndicatorName)) +
+  facet_wrap(~Country) +
+  
+  # labeling
+  labs(
+    title = &quot;GDP and its breakdown at constant 2010 prices in US Dollar&quot;,
+    y = &quot;Proportion&quot;,
+    x = &quot;&quot;,
+    color = &quot;&quot;
+    ) +
+  
+  # visual theme
+  theme(
+              strip.background = element_rect(fill=&quot;grey&quot;, size = 0.5, color = &quot;black&quot;),
+              strip.text = element_text(size=10),
+              panel.background = element_rect(colour = &quot;black&quot;, size=0.5, fill = NA),
+              panel.grid = element_line(colour = &quot;#f1f1f1&quot;),
+              legend.key = element_rect(colour = &quot;transparent&quot;, fill = &quot;transparent&quot;),
+              plot.title = element_text(size = 12),
+              axis.text.y = element_text(size = 10)) +
+  
+  # axis and legend
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(breaks = seq(1970, 2010, by = 10)) +
+    scale_color_discrete(labels = c( 
+                                 &quot;Government expenditure&quot;, 
+                                 &quot;Gross Capital Expenditure&quot;,
+                                 &quot;Household expenditure&quot;,
+                                 &quot;Net Exports&quot;))</code></pre>
+<p><img src="/blogs/GDP_files/figure-html/unnamed-chunk-4-1.png" width="960" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries?</p>
+</blockquote>
+<p>Generally speaking, the last chart gives us a percentage split for each component of the GDP. While the general tendency is similar across all three countries, we can observe some interesting dynamics.</p>
+<p>Germany, as a very mature and highly developed country, does not show extreme changes within the GDP split and investments (Gross Capital Expenditure) are even decreasing. The strong export focus on exports is, however, clearly observable in terms of net exports which increased significantly over the past 20 years. Germany is today one of the leading exporting countries.</p>
+<p>Looking at India, we can see that the country is developing very quickly with rapid shifts in terms of GDP components. The household spending has become a smaller part of the GDP while private investments almost doubled its share. National as well as international companies might have identified the enormous potential of India’s rapidly growing population and invested correspondingly.</p>
+<p>The United States stand out due to its growing share of household spending. An American population that gets increasingly wealthy might be a possible explanation. Furthermore, Americans are known for extensive spending, even on credit. Despite that, the country continues to be an attractive place for investments.</p>
+<p>End note: Due to COVID-19, all countries would now and in the coming years show a spike in government spending.</p>
+</div>
+
+                        </div>
+                    </section>
+            <!-- Disqus Inject -->
+                
+            </div>
+            
+        <!-- Footer -->
+            
+                <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                
+                    <li><a href="https://twitter.com/NaumanAlam" class="icon alt fa-twitter" target="_blank"><span class="label">Twitter</span></a></li>
+                
+                    <li><a href="https://github.com/NaumanKhanMFA" class="icon alt fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                
+                    <li><a href="https://www.linkedin.com/in/muhammad-nauman-alam-khan/" class="icon alt fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                
+            </ul>
+            <ul class="copyright">
+                <li>&copy; Nauman Khan</li>
+                
+            </ul>
+        </div>
+    </footer>
+
+            
+        </div>
+
+    <!-- Scripts -->
+        <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.scrolly.min.js"></script>
+    <script src="/js/jquery.scrollex.min.js"></script>
+    <script src="/js/skel.min.js"></script>
+    <script src="/js/util.js"></script>
+
+    
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+
+    
+
+    
+
+    </body>
+</html>

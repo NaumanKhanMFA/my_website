@@ -47,13 +47,13 @@ disqusShortname = ""
       name = "Home"
       url = "#"
 
-    [[params.navigation.links]]
-      name = "About Me"
-      url = "About Me"
+   # [[params.navigation.links]]
+   #   name = "About Me"
+    #  url = "About Me"
 
-    [[params.navigation.links]]
-      name = "Blogs"
-       url = "Blogs"
+   # [[params.navigation.links]]
+     # name = "Projects"
+     #  url = "blogs"
 
   #  [[params.navigation.links]]
    #   name = "Elements"
@@ -69,12 +69,12 @@ disqusShortname = ""
     # Button Style 1
     [[params.navigation.button1]]
       name = "About Me"
-      url = "About Me"
+      url = "blogs/Muhammad_Nauman_Alam_Khan"
 
     # Button Style 2
     [[params.navigation.button2]]
-      name = "Blogs"
-      url = "Blogs"
+      name = "Projects"
+      url = "blogs"
 
 
   # Banner section
@@ -93,39 +93,39 @@ disqusShortname = ""
     
     [[params.tiles.showcase]]
       title = "About Me"
-        subtitle = "Personal Headline"
+      subtitle = "Brief Biography"
       image = "pic01.jpeg"
-      url = "About Me"
+      url = "blogs/Muhammad_Nauman_Alam_Khan"
 
     [[params.tiles.showcase]]
-      title = "Blog 1"
-      subtitle = "Blog Headline"
+      title = "Movie Time"
+      subtitle = "Analysis of Movies- IMDB Dataset"
       image = "pic02.jpg"
-      url = "blogs/tempus"
+      url = "blogs/IMDB"
 
     [[params.tiles.showcase]]
-      title = "Blog 2"
-      subtitle = "Lorem Etiam Nullam"
+      title = "GDP Growth"
+      subtitle = "GDP Components Over Time and Among Countries"
       image = "pic03.jpg"
-      url = "blogs/magna"
+      url = "blogs/GDP"
 
     [[params.tiles.showcase]]
-      title = "Blog 3"
-      subtitle = "Blog Headline"
+      title = "Climate Change"
+      subtitle = "Climate Change and Temperature Anomalies"
       image = "pic04.jpg"
-      url = "blogs/ipsum"
+      url = "blogs/Climate-Change"
 
     [[params.tiles.showcase]]
-      title = "Blog 3"
-      subtitle = "Blog Headline"
+      title = "Trump's Approval Margins"
+      #subtitle = "Trump's Approval Margins"
       image = "pic05.jpg"
-      url = "blogs/ipsum"
+      url = "blogs/Trump-Approval"
 
     [[params.tiles.showcase]]
-      title = "Blog 4"
-      subtitle = "Blog Headline"
+      title = "COVID Analysis"
+      subtitle = "CDC COVID-19 Public Use Data"
       image = "pic06.jpg"
-      url = "blogs/ipsum"
+      url = "blogs/CDC"
     # You can make more showcases by copy and pasting the code above
 
   [params.blog]
@@ -138,14 +138,11 @@ disqusShortname = ""
   # Section Type Two
   [params.two]
     enable = true
-    title = "Massa libero"
-    subtitle = """Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. 
-    Mauris aliquet magna magna sed nunc rhoncus pharetra. 
-    Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. 
-    Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero.
-    Mauris aliquet magna magna sed nunc rhoncus amet pharetra et feugiat tempus."""
+    title = "Website Brief"
+   subtitle = """This website serves as an online portfolio sharing the analysis conducted on R by me and my study group during the Data Analytics course while pursuing our Masters in Financial Analysis at the London Business School 
+   ."""
     buttonText = "More About Me"
-    url = "About Me"
+    url = "blogs/Muhammad_Nauman_Alam_Khan"
 
 
   # Contact section

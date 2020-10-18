@@ -1,0 +1,254 @@
+---
+categories:
+- ""
+- ""
+date: "2017-10-31T21:28:43-05:00"
+description: ""
+draft: false
+image: pic03.jpg
+keywords: ""
+slug: GDP
+title: GDP Components Over Time and Among Countries
+---
+
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, echo=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
+library(here)
+library(skimr)
+library(janitor)
+library(broom)
+library(tidyquant)
+library(kableExtra)
+library(infer)
+library(openintro)
+library(tidyquant)
+```
+
+At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). You can read more about GDP and the different approaches in calculating at the [Wikipedia GDP page](https://en.wikipedia.org/wiki/Gross_domestic_product).
+
+The GDP data we will look at is from the [United Nations' National Accounts Main Aggregates Database](https://unstats.un.org/unsd/snaama/Downloads), which contains estimates of total GDP and its components for all countries from 1970 to today. We will look at how GDP and its components have changed over time, and compare different countries and how much each component contributes to that country's GDP. The file we will work with is [GDP and its breakdown at constant 2010 prices in US Dollars](http://unstats.un.org/unsd/amaapi/api/file/6) and it has already been saved in the Data directory. Have a look at the Excel file to see how it is structured and organised
+
+## Tidy up the data
+
+```{r read_GDP_data}
+
+# download the data
+UN_GDP_data  <-  readxl::read_excel(path="data/Download-GDPconstant-USD-countries.xls", sheet ="Download-GDPconstant-USD-countr", # Excel filename
+                skip=2) # Number of rows to skip
+
+```
+
+
+```{r}
+
+# unique variables
+unique(UN_GDP_data$IndicatorName)
+
+# turning indicator variables to categories
+UN_GDP_data$IndicatorName = factor(UN_GDP_data$IndicatorName)
+
+# rename categories  
+UN_GDP_data$IndicatorName <- fct_recode(UN_GDP_data$IndicatorName, 
+           Final_consumption = "Final consumption expenditure",
+           Household_consumption = "Household consumption expenditure (including Non-profit institutions serving households)",
+           Government_consumption = "General government final consumption expenditure",
+           Gross_capital_formation = "Gross capital formation",           
+           Gross_fixed_capital_formation = "Gross fixed capital formation (including Acquisitions less disposals of valuables)",
+           Exports = "Exports of goods and services",
+           Imports = "Imports of goods and services",
+           GDP_given = "Gross Domestic Product (GDP)",
+           AAHFF = "Agriculture, hunting, forestry, fishing (ISIC A-B)",
+           MMU = "Mining, Manufacturing, Utilities (ISIC C-E)",
+           Manufacturing = "Manufacturing (ISIC D)",
+           Construction = "Construction (ISIC F)",
+           WRRH = "Wholesale, retail trade, restaurants and hotels (ISIC G-H)",
+           TSC = "Transport, storage and communication (ISIC I)",                        
+           Others = "Other Activities (ISIC J-P)"
+           )
+
+# create tidied data frame
+tidy_GDP_data  <- UN_GDP_data %>% 
+  pivot_longer(cols=4:51, names_to="Year", values_to="GDP") %>%  # bring year variable in long format#
+  mutate(GDP = GDP/10^9)
+
+# have a look at tidied data
+glimpse(tidy_GDP_data)
+
+
+```
+## Reproduction: Chart 1
+
+
+```{r, fig.width = 10}
+
+# Let us compare GDP components for these 3 countries
+country_list <- c("Germany", "India", "United States")
+
+# select only the required components of GDP
+indicator_list <- c("Gross_capital_formation", "Exports", "Government_consumption", "Household_consumption", "Imports")
+
+# turn GDP into numeric data
+tidy_GDP_data$GDP <- as.numeric(as.character(tidy_GDP_data$GDP))
+tidy_GDP_data$Year <- as.numeric(as.character(tidy_GDP_data$Year))
+
+# select data only for selected countries & indicators
+graph1_data <- tidy_GDP_data %>% 
+  filter(Country %in% country_list) %>% 
+  filter(IndicatorName  %in% indicator_list)
+
+# create ggplot
+ggplot(graph1_data, aes(x=Year, y=GDP, color=IndicatorName)) + 
+  
+  # set line and facets
+  geom_line(aes(group=IndicatorName)) +
+  facet_wrap(~Country) +
+  
+  # labeling
+  labs(
+    title = "GDP components over time",
+    subtitle = "In constant 2010 USD",
+    y = "Billion US$",
+    x = "",
+    color = "Components of GDP"
+    ) +
+  
+  # visual theme
+  theme(
+              strip.background = element_rect(fill="grey", size = 0.5, color = "black"),
+              strip.text = element_text(size=10),
+              panel.background = element_rect(colour = "black", size=0.5, fill = NA),
+              panel.grid = element_line(colour = "#f1f1f1"),
+              legend.key = element_rect(colour = "transparent", fill = "transparent"),
+              plot.title = element_text(size = 12)) +
+  
+  # axis and legend
+  scale_x_continuous(breaks = seq(1970, 2010, by = 10)) +
+  scale_color_discrete(labels = c("Exports", 
+                                 "Government expenditure", 
+                                 "Gross Capital Expenditure",
+                                 "Household expenditure",
+                                 "Imports"))
+
+
+```
+
+## Manual calculation of GDP
+
+Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*), Gross Capital Formation (business investment *I*), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator `Gross Domestic Product (GDP)` in your dataframe, I would like you to calculate it given its components discussed above.
+
+
+> What is the % difference between what you calculated as GDP and the GDP figure included in the dataframe?
+
+```{r}
+
+# select only the required components of GDP
+indicator_list2 <- c("Gross_capital_formation", "Exports", "Government_consumption", "Household_consumption", "Imports", "GDP_given")
+
+# calculate overall GDP
+calculated_GDP <- graph1_data %>%
+  mutate(GDP = case_when(IndicatorName == "Imports" ~ -GDP, TRUE ~ GDP)) %>% 
+  group_by(Country, Year) %>% 
+  summarise(Yearly_GDP = sum(GDP))
+
+# create wide format table and join calculated GDP
+graph2_data <- tidy_GDP_data %>% 
+  filter(Country %in% country_list) %>% 
+  filter(IndicatorName  %in% c(indicator_list2)) %>% 
+  
+  # switch to wide format to do calculations
+  pivot_wider(names_from = IndicatorName, values_from = GDP) %>%
+  mutate(Net_Exports = Exports - Imports) %>% 
+  inner_join(calculated_GDP, by = c("Country", "Year")) %>% 
+  mutate(abs_difference = Yearly_GDP - GDP_given) %>% 
+  mutate(per_difference = (abs_difference/ GDP_given)*100)
+
+# print difference between given GDP and calculated GDP
+graph2_data %>% 
+  select(c(Country, Year, per_difference)) %>% 
+  kbl(col.names = c("Country", "Year", "% difference in GDP")) %>%
+  kable_classic("striped") %>%
+  kable_styling(fixed_thead = T)
+  
+  
+```
+
+# Reproduction: Chart 2
+
+```{r, fig.width = 10}
+
+# modify data to have all required input for plot
+graph3_data <- graph2_data %>%
+  select(c(Country, Year, Household_consumption, Government_consumption, Gross_capital_formation, Net_Exports, Yearly_GDP)) %>% 
+  pivot_longer(cols=3:6, names_to="IndicatorName", values_to="GDP") %>% 
+  mutate(GDP_percent = (GDP/Yearly_GDP))
+
+# create ggplot
+ggplot(graph3_data, aes(x=Year, y=GDP_percent, color=IndicatorName)) + 
+  
+  # set line and facets
+  geom_line(aes(group=IndicatorName)) +
+  facet_wrap(~Country) +
+  
+  # labeling
+  labs(
+    title = "GDP and its breakdown at constant 2010 prices in US Dollar",
+    y = "Proportion",
+    x = "",
+    color = ""
+    ) +
+  
+  # visual theme
+  theme(
+              strip.background = element_rect(fill="grey", size = 0.5, color = "black"),
+              strip.text = element_text(size=10),
+              panel.background = element_rect(colour = "black", size=0.5, fill = NA),
+              panel.grid = element_line(colour = "#f1f1f1"),
+              legend.key = element_rect(colour = "transparent", fill = "transparent"),
+              plot.title = element_text(size = 12),
+              axis.text.y = element_text(size = 10)) +
+  
+  # axis and legend
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(breaks = seq(1970, 2010, by = 10)) +
+    scale_color_discrete(labels = c( 
+                                 "Government expenditure", 
+                                 "Gross Capital Expenditure",
+                                 "Household expenditure",
+                                 "Net Exports"))
+
+
+```
+
+> What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries? 
+
+Generally speaking, the last chart gives us a percentage split for each component of the GDP. While the general tendency is similar across all three countries, we can observe some interesting dynamics.
+
+Germany, as a very mature and highly developed country, does not show extreme changes within the GDP split and investments (Gross Capital Expenditure) are even decreasing. The strong export focus on exports is, however, clearly observable in terms of net exports which increased significantly over the past 20 years. Germany is today one of the leading exporting countries.
+
+Looking at India, we can see that the country is developing very quickly with rapid shifts in terms of GDP components. The household spending has become a smaller part of the GDP while private investments almost doubled its share. National as well as international companies might have identified the enormous potential of India's rapidly growing population and invested correspondingly.
+
+The United States stand out due to its growing share of household spending. An American population that gets increasingly wealthy might be a possible explanation. Furthermore, Americans are known for extensive spending, even on credit. Despite that, the country continues to be an attractive place for investments. 
+
+End note: Due to COVID-19, all countries would now and in the coming years show a spike in government spending. 
