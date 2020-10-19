@@ -1,39 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Lifestyle on Portfolio Website for Nauman</title>
+    <title>Blogs on Portfolio Website for Nauman</title>
     <link>/blogs/</link>
-    <description>Recent content in Lifestyle on Portfolio Website for Nauman</description>
+    <description>Recent content in Blogs on Portfolio Website for Nauman</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 31 Oct 2017 22:27:21 -0500</lastBuildDate><atom:link href="/blogs/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Aliquam</title>
-      <link>/blogs/aliquam/</link>
-      <pubDate>Tue, 31 Oct 2017 22:42:51 -0500</pubDate>
-      
-      <guid>/blogs/aliquam/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tempus</title>
-      <link>/blogs/tempus/</link>
-      <pubDate>Tue, 31 Oct 2017 22:26:13 -0500</pubDate>
-      
-      <guid>/blogs/tempus/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Magna</title>
-      <link>/blogs/magna/</link>
-      <pubDate>Tue, 31 Oct 2017 22:26:09 -0500</pubDate>
-      
-      <guid>/blogs/magna/</guid>
-      <description></description>
-    </item>
-    
+    <lastBuildDate>Tue, 31 Oct 2017 21:28:43 -0500</lastBuildDate><atom:link href="/blogs/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CDC COVID-19 Public Use Data</title>
       <link>/blogs/cdc/</link>
@@ -77,22 +50,14 @@ The GDP data we will look at is from the United Nations’ National Accounts Mai
     </item>
     
     <item>
-      <title>Ipsum</title>
-      <link>/blogs/ipsum/</link>
-      <pubDate>Tue, 31 Oct 2017 21:28:43 -0500</pubDate>
-      
-      <guid>/blogs/ipsum/</guid>
-      <description>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis magna sed nunc rhoncus condimentum sem. In efficitur ligula tate urna. Maecenas massa sed magna lacinia magna pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis tempus.</description>
-    </item>
-    
-    <item>
       <title>Nauman Khan Biography</title>
       <link>/blogs/muhammad_nauman_alam_khan/</link>
       <pubDate>Tue, 31 Oct 2017 21:28:43 -0500</pubDate>
       
       <guid>/blogs/muhammad_nauman_alam_khan/</guid>
-      <description>IntroductionMy name is Muhammad Nauman Alam Khan and I was born and brought up in Paksitan, where I spent the first 16 years of my life. It was during my formative years that I was initially introduced to field hockey, a sport that I would go on to dedicate most of the next decade of my life to.
-HockeyI first played the sport casually at school before trying out for the school team, of which I became the captain of in my second year on the team.</description>
+      <description>### Introduction
+My name is Muhammad Nauman Alam Khan and I was born and brought up in Paksitan, where I spent the first 16 years of my life. It was during my formative years that I was initially introduced to field hockey, a sport that I would go on to dedicate most of the next decade of my life to.
+HockeyI first played the sport casually at school before trying out for the school team, of which I became the captain of in my second year on the team.</description>
     </item>
     
     <item>
