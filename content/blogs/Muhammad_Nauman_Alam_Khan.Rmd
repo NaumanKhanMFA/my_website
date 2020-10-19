@@ -5,12 +5,13 @@ categories:
 date: "2017-10-31T21:28:43-05:00"
 description: ""
 draft: false
-image: pic01.jpeg
+#image: pic01.jpeg
 keywords: ""
 slug: Muhammad_Nauman_Alam_Khan
 title: Nauman Khan Biography
 ---
 
+![](../pic01.jpg){width=25% height=25%}
 ### Introduction
 
 My name is **Muhammad *Nauman* Alam Khan** and I was born and brought up in **Paksitan**, where I spent the first 16 years of my life. It was during my formative years that I was initially introduced to field hockey, a sport that I would go on to dedicate most of the next decade of my life to. 
@@ -30,3 +31,4 @@ These qualities along with a strong capacity to perform under high pressure situ
 ### Moving Countries
 In 2013, I moved to Saudi Arabia with my family. I continued my education here, completing my A Levels before moving to Malaysia in 2015 to pursue my Undergraduate degree in Finance at the University of Nottingham. 
 
+![](../Muhammad Nauman Alam Khan Resume.pdf)
